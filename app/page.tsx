@@ -1,29 +1,14 @@
-/*
-DJMENG.vip - 个人主页首页代码（Next.js + Tailwind CSS）
-*/
-
-// app/page.tsx (Next.js App Router 入口首页)
-
+// app/page.tsx
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white font-sans">
       <section className="flex flex-col items-center justify-center h-screen text-center px-4">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          Coding the Mind. Riding the World.
-        </h1>
-        <p className="text-lg md:text-2xl text-gray-400 mb-6">
-          算法工程师 ｜ LLM训练专家 ｜ 自由骑士
-        </p>
+        <h1 className="text-4xl md:text-6xl font-bold mb-4">Coding the Mind. Riding the World.</h1>
+        <p className="text-lg md:text-2xl text-gray-400 mb-6">算法工程师 ｜ LLM训练专家 ｜ 自由骑士</p>
         <div className="space-x-4">
-          <a href="#about" className="px-6 py-2 bg-teal-400 text-black rounded-xl hover:brightness-125 transition">
-            📍了解我
-          </a>
-          <a href="#projects" className="px-6 py-2 bg-gray-800 border border-gray-600 rounded-xl hover:bg-gray-700 transition">
-            💻项目展示
-          </a>
-          <a href="#contact" className="px-6 py-2 bg-gray-800 border border-gray-600 rounded-xl hover:bg-gray-700 transition">
-            📬联系我
-          </a>
+          <a href="#about" className="px-6 py-2 bg-teal-400 text-black rounded-xl hover:brightness-125 transition">📍了解我</a>
+          <a href="#projects" className="px-6 py-2 bg-gray-800 border border-gray-600 rounded-xl hover:bg-gray-700 transition">💻项目展示</a>
+          <a href="/blog" className="px-6 py-2 bg-gray-800 border border-gray-600 rounded-xl hover:bg-gray-700 transition">📝技术博客</a>
         </div>
       </section>
 
@@ -60,5 +45,5 @@ export default function Home() {
         <p className="text-gray-300">📄 简历下载：<a href="/resume.pdf" className="underline">点击查看</a></p>
       </section>
     </main>
-  );
+  )
 }
