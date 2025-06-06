@@ -13,10 +13,11 @@ interface Post {
   tags?: string[]
 }
 
-export function getAllPosts(): Post[] {
-  return fs.readdirSync(blogDir).map((filename) => {
+export async function getAllPosts(): Promise<Post[]> {
+  const filenames = await fs.promises.readdir(blogDir)
+  return await Promise.all(filenames.map(async (filename) => {
     const slug = filename.replace(/\.md$/, '')
-    const fileContent = fs.readFileSync(path.join(blogDir, filename), 'utf8')
+    const fileContent = await fs.promises.readFile(path.join(blogDir, filename), 'utf8')
     const { data, content } = matter(fileContent)
     
     return {
@@ -32,12 +33,12 @@ export function getAllPosts(): Post[] {
       content,
       tags: data.tags || []
     } as Post
-  })
+  }))
 }
 
-export function getPostBySlug(slug: string): Post {
+export async function getPostBySlug(slug: string): Promise<Post> {
   const fullPath = path.join(blogDir, `${slug}.md`)
-  const fileContent = fs.readFileSync(fullPath, 'utf8')
+  const fileContent = await fs.promises.readFile(fullPath, 'utf8')
   const { data, content } = matter(fileContent)
   
   return {
