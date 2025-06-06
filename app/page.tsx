@@ -4,6 +4,7 @@ DJMENG.vip - 个人主页首页代码（Next.js + Tailwind CSS）
 
 // app/page.tsx (Next.js App Router 入口首页)
 
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white font-sans">
@@ -20,6 +21,9 @@ export default function Home() {
           </a>
           <a href="#projects" className="px-6 py-2 bg-gray-800 border border-gray-600 rounded-xl hover:bg-gray-700 transition">
             💻项目展示
+          </a>
+          <a href="/blog" className="px-6 py-2 bg-gray-800 border border-gray-600 rounded-xl hover:bg-gray-700 transition">
+            📝 博客
           </a>
           <a href="#contact" className="px-6 py-2 bg-gray-800 border border-gray-600 rounded-xl hover:bg-gray-700 transition">
             📬联系我
