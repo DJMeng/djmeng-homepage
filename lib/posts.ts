@@ -1,48 +1,4 @@
-// import fs from 'fs';
-// import path from 'path';
-// import matter from 'gray-matter';
-// import { marked } from 'marked';
-
-// const postsDirectory = path.join(process.cwd(), 'posts');
-
-// interface Post {
-//   slug: string;
-//   title: string;
-//   date: string;
-//   excerpt: string;
-//   content: string;
-// }
-
-// export async function getAllSlugs(): Promise<string[]> {
-//   return fs.readdirSync(postsDirectory).map((filename) =>
-//     filename.replace(/\.mdx?$/, '')
-//   );
-// }
-
-// export async function getPostBySlug(slug: string): Promise<Post | null> {
-//   const fullPath = path.join(postsDirectory, `${slug}.md`);
-//   if (!fs.existsSync(fullPath)) return null;
-
-//   const fileContents = fs.readFileSync(fullPath, 'utf8');
-//   const { data, content } = matter(fileContents);
-
-//   return {
-//     slug,
-//     title: data.title || slug,
-//     date: data.date || '',
-//     excerpt: data.excerpt || '',
-//     content,
-//   };
-// }
-
-
-
-// ---
-
 // ## ✅ 第二步：创建 `lib/posts.ts`
-
-// 这是读取和转换 Markdown 的核心工具：
-
 // lib/posts.ts
 import fs from 'fs';
 import path from 'path';
@@ -53,7 +9,7 @@ import highlight from 'remark-highlight.js';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
-export function getAllSlugs() {
+export async function getAllSlugs() {
   const fileNames = fs.readdirSync(postsDirectory);
   return fileNames
     .filter((file) => file.endsWith('.md'))
