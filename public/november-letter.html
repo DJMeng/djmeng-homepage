@@ -157,8 +157,7 @@
       45% { opacity: .85; }
       100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--angle)) scale(.3); }
     }
-    .love-toast { position: fixed; top: max(18vh, env(safe-area-inset-top)); left: 50%; width: min(390px, calc(100% - 40px)); margin: 0; padding: 22px 24px; border: 1px solid #e6b08d75; border-radius: 20px; background: #291119f5; color: #ffe3c3; box-shadow: 0 12px 48px #190a1150; text-align: center; font: italic clamp(1.45rem, 5vw, 2rem)/1.5 Georgia, serif; pointer-events: none; z-index: 11; transform: translateX(-50%); animation: love-toast-arrive 3.2s ease both; }
-    @keyframes love-toast-arrive { 0%, 100% { opacity: 0; transform: translate(-50%, 10px); } 15%, 82% { opacity: 1; transform: translate(-50%, 0); } }
+    .sky-love { display: block; margin-top: 16px; font: italic clamp(1.6rem, 5vw, 2.5rem)/1.5 Georgia, serif; color: #ffe3c3; }
     @keyframes words-arrive { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
     @keyframes smoke-rise { 0% { opacity: 0; transform: translateY(0); } 25% { opacity: .55; } 100% { opacity: 0; transform: translate(8px, -32px) scaleX(1.15); } }
     @keyframes light-rise { 0% { opacity: 0; transform: translate(0, 20px); } 20% { opacity: .7; } 100% { opacity: 0; transform: translate(var(--dx), -120px); } }
@@ -295,7 +294,6 @@
     </section>
   </main>
   <div class="fireworks" aria-hidden="true"></div>
-  <p class="love-toast" id="love-toast" role="status" hidden></p>
   <script>
     const cover = document.querySelector('#cover');
     const opener = document.querySelector('#open-letter');
@@ -356,7 +354,6 @@
     candle.hidden = false;
     const music = document.querySelector('#music');
     const musicStatus = document.querySelector('#music-status');
-    const loveToast = document.querySelector('#love-toast');
     const AudioEngine = window.AudioContext || window.webkitAudioContext;
     // Happy Birthday, in C major. Each entry is [MIDI pitch, beats].
     const melody = [
@@ -371,19 +368,8 @@
     let playing;
     let musicBuffer;
     let musicSource;
-    let musicStartedAt;
-    let loveTimer;
-    let loveHideTimer;
-
-    function hideLove() {
-      clearTimeout(loveHideTimer);
-      loveToast.hidden = true;
-      loveToast.textContent = '';
-    }
 
     function stopMusic() {
-      clearTimeout(loveTimer);
-      hideLove();
       if (!playing) return;
       const output = playing;
       const source = musicSource;
@@ -404,36 +390,11 @@
       music.setAttribute('aria-pressed', 'false');
     }
 
-    function showLove() {
-      if (!playing || document.hidden || !loveToast.hidden) return;
-      loveToast.textContent = 'I love you, Ming.';
-      loveToast.hidden = false;
-      loveHideTimer = setTimeout(hideLove, 3200);
-    }
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) hideLove();
-    });
-
-    function scheduleLove() {
-      if (!playing) return;
-      const verseSeconds = melodyBeats * beatSeconds;
-      const elapsed = Math.max(0, audio.currentTime - musicStartedAt);
-      let next = musicStartedAt + Math.floor(elapsed / musicBuffer.duration) * musicBuffer.duration + verseSeconds + .2;
-      if (next <= audio.currentTime + .01) next += musicBuffer.duration;
-      loveTimer = setTimeout(() => {
-        if (!playing) return;
-        const phase = (audio.currentTime - musicStartedAt) % musicBuffer.duration;
-        if (phase >= verseSeconds && phase < verseSeconds + 1) showLove();
-        scheduleLove();
-      }, Math.max(50, (next - audio.currentTime) * 1000));
-    }
-
     // Render a whole music-box verse once; native audio looping keeps it playing
     // without relying on timers that browsers throttle in background tabs.
     function createMusicBuffer() {
       const sampleRate = 22050;
-      const duration = melodyBeats * beatSeconds + 3.5;
+      const duration = melodyBeats * beatSeconds + 1.4;
       const buffer = audio.createBuffer(1, Math.ceil(duration * sampleRate), sampleRate);
       const samples = buffer.getChannelData(0);
       function addNote(start, pitch, volume, length) {
@@ -483,9 +444,7 @@
           musicSource.buffer = musicBuffer;
           musicSource.loop = true;
           musicSource.connect(playing);
-          musicStartedAt = audio.currentTime + .06;
-          musicSource.start(musicStartedAt);
-          scheduleLove();
+          musicSource.start(audio.currentTime + .06);
           music.textContent = 'Ⅱ 停止生日快乐';
           music.classList.add('is-playing');
           music.setAttribute('aria-pressed', 'true');
@@ -629,6 +588,11 @@
     function revealHeartMessage() {
       if (skyReveal.textContent) return;
       skyReveal.append('这几天，我都记得。', document.createElement('br'), '普通的那些天，也想好好陪你过。');
+      const love = document.createElement('span');
+      love.className = 'sky-love';
+      love.lang = 'en';
+      love.textContent = 'I love you, Ming.';
+      skyReveal.append(love);
       skyReveal.classList.add('is-revealed');
     }
 
