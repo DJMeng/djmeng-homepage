@@ -18,6 +18,79 @@
     .letter-wrap{padding:clamp(65px,9vw,125px) 24px;background:#eddbce}.letter{position:relative;max-width:790px;margin:auto;padding:clamp(35px,7vw,82px);background:#fff8ed;box-shadow:0 16px 48px #47202514;border:1px solid #dabeb0}.letter::before{content:"";position:absolute;inset:9px;border:1px solid #c38d844b;pointer-events:none}.letter-date{color:#88404b}.letter h2{font-size:clamp(2rem,5vw,3.45rem);margin:18px 0 28px}.letter p{margin:0 0 1em;line-height:2.05}.letter .signature{font-family:var(--serif);font-size:1.25rem;text-align:right;margin:25px 0 0;color:#88404b}.letter .letter-link{display:inline-block;color:#883e49;font-size:.9rem;text-underline-offset:5px;margin-top:14px}
     .night{text-align:center;padding:clamp(65px,9vw,112px) 22px 36px;background:radial-gradient(ellipse at 50% 45%,#61303b,transparent 60%),var(--wine)}.wish-copy{color:#ecd1c4}.cake{display:block;width:min(255px,70vw);height:auto;margin:22px auto 15px;overflow:visible}.flames{transform-origin:center;animation:flicker 2.4s ease-in-out infinite;transition:opacity .35s}.candle-out .flames{opacity:0;animation:none}.wish-result{margin:15px auto 0;color:#f5d0ae;max-width:30em;min-height:3.7em}.night footer{border-top:1px solid #e6b08d33;width:min(850px,100%);padding-top:23px;margin:56px auto 0;color:#e6b08d}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}.confetti i{position:absolute;top:-18px;left:var(--x);width:var(--s);height:calc(var(--s)*.55);background:var(--c);border-radius:1px;animation:fall var(--d) var(--delay) ease-in both}@keyframes fall{to{transform:translate3d(var(--dx),108vh,0) rotate(620deg);opacity:.1}}@keyframes flicker{50%{opacity:.78;transform:scaleY(.96)}}
     @media(max-width:690px){.mast,.edge{font-size:.61rem;letter-spacing:.16em;padding-block:17px}.cover-grid{grid-template-columns:1fr;gap:10px;text-align:center;padding:27px 0 23px}.cover h1{font-size:clamp(3.25rem,12vw,5.2rem);margin:12px 0}.cover-copy>p:not(.label){font-size:.92rem;margin-bottom:17px}.cover-art{width:min(300px,86vw)}.cover-art figcaption{font-size:.8rem}.timeline li{grid-template-columns:25px minmax(0,1fr) 45px;gap:5px 9px;padding:18px 0}.timeline time{grid-column:2;grid-row:1}.timeline .number{grid-row:1/3;align-self:start}.timeline .event{grid-column:2;grid-row:2}.timeline svg{grid-column:3;grid-row:1/3;width:39px}.timeline p{font-size:.88rem}.section-top{margin-bottom:33px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+    .music {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 44px;
+      padding: 4px 0;
+      border: 0;
+      background: transparent;
+      color: #f0c5ae;
+      font-size: .85rem;
+    }
+    .music:hover { color: #fff1dd; }
+    .cover-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px 20px;
+    }
+    .music-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .stars {
+      padding: clamp(64px, 9vw, 112px) 24px;
+      color: var(--paper);
+      background: radial-gradient(ellipse at 50% 60%, #422943, #211729 64%, #191223);
+    }
+    .stars .section-top { margin-bottom: 28px; }
+    .stars .section-top > p:last-child { color: #e4c8dc; }
+    .sky {
+      position: relative;
+      width: min(100%, 690px);
+      aspect-ratio: 1.8;
+      margin: auto;
+      overflow: hidden;
+      border: 1px solid #e4b5d44a;
+      border-radius: 8px;
+      background: radial-gradient(ellipse at 34% 35%, #5f334d, transparent 60%),
+        radial-gradient(ellipse at 67% 77%, #302b58, #1b162d 70%);
+    }
+    .sky canvas { display: block; width: 100%; height: 100%; }
+    .star-keys {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px auto 12px;
+    }
+    .star-key {
+      border: 1px solid #e4b5d475;
+      border-radius: 30px;
+      background: #23192e;
+      color: #f1d6e7;
+      min-height: 44px;
+      padding: 7px 15px;
+    }
+    .star-key:hover { background: #563649; }
+    .star-key[aria-pressed="true"] {
+      background: #f4d7bd;
+      border-color: #f4d7bd;
+      color: #351920;
+    }
+    .star-key .star-symbol { margin-right: 5px; }
+    .sky-message {
+      min-height: 3.75em;
+      text-align: center;
+      max-width: 34em;
+      margin: 18px auto 8px;
+      color: #f4d7bd;
+    }
+    .stars-next { text-align: center; margin-top: 8px; }
+    .stars-next a { color: #f4d7bd; text-underline-offset: 5px; }
+    @media (max-width: 690px) {
+      .cover-controls { justify-content: center; }
+      .sky { aspect-ratio: 1.32; }
+    }
   </style>
 </head>
 <body>
@@ -28,7 +101,11 @@
         <p class="label">2027.11.18 &nbsp; · &nbsp; 给我的老婆</p>
         <h1>这一封，<br><em>只写给你。</em></h1>
         <p>从我们在一起的那天起，<br>我就有了越来越多想记住的日子。</p>
-        <a class="action" href="#story" id="open-letter">拆开这封信 <span aria-hidden="true">↘</span></a>
+        <div class="cover-controls">
+          <a class="action" href="#story" id="open-letter">拆开这封信 <span aria-hidden="true">↘</span></a>
+          <button type="button" class="music" id="music" hidden>♫ 播放小夜曲</button>
+          <span class="music-status" id="music-status" role="status"></span>
+        </div>
       </div>
       <figure class="cover-art">
         <svg viewBox="0 0 560 465" aria-hidden="true">
@@ -71,12 +148,30 @@
       <article class="letter">
         <div class="letter-date">02 &nbsp; / &nbsp; 一封生日信</div>
         <h2 id="letter-title">老婆，生日快乐。</h2>
-        <p>我把几个舍不得忘的日子写在了前面。可真要说起结婚以后我最喜欢什么，答案其实特别普通：做什么事都多了一个可以说「咱们」的人。咱们晚上吃什么？咱们下次去哪儿？光是这两个字，就够我高兴一会儿了。</p>
-        <p>27 岁，我希望你的日子里多一点「我想」，少一点「我应该」。喜欢的衣服就穿，想吃的那口就去吃，累了就安心休息。如果你哪天想做一件大事，我陪你去试；如果只想窝在家里，今天的饭我来想。</p>
-        <p>还有，生日愿望可以全许给你自己。至于好好爱你这件事，我来记着。</p>
+        <p>这次给你写信，我又去翻了那几个日期。2022 年 5 月 27 日，我们在一起。后来我们领证、办婚礼。最初只是想多跟你待一会儿，后来就真的有了一个能说「咱们回家吧」的人。直到现在，有时随口喊你一声「老婆」，我心里还是会偷偷高兴一下。</p>
+        <p>结婚以后，我们也有过说几句话就不痛快的时候。忙了一天回到家，两个人都累，都想对方体谅自己，偏偏开口时只顾着说自己的委屈。我有时话说得急，听见半句就以为懂了你的意思。冷静下来回头想，有些话，其实可以坐下来慢慢说。</p>
+        <p>我相信我们会越来越好。下次我着急的时候，先停一停，听你把话讲完。心里有事，我也试着早点说清楚。平常就从小事做起，吃饭时把手机放一放，问问你今天过得怎么样。你惦记的小事，有空也一起去做。还要多说几声谢谢，那些平时容易忘了说的，现在想起来都该认真跟你说。</p>
+        <p>这些是我想留到生日之后，慢慢做给你看的事。今天先把时间留给你。希望 27 岁的你，想吃什么就吃个痛快，喜欢什么就大大方方地喜欢，累了就好好休息。生日愿望也都许给你自己。老婆，生日快乐。我还是很想和你把以后的日子，一天一天过下去。</p>
         <p class="signature">爱你的老公</p>
-        <a class="letter-link" href="#wish">还有蜡烛没吹呢 ↓</a>
+        <a class="letter-link" href="#stars">给我们的日子点上星星 ↓</a>
       </article>
+    </section>
+    <section class="stars" id="stars" aria-labelledby="stars-title">
+      <div class="wrap">
+        <div class="section-top">
+          <h2 id="stars-title">把我们的星星点亮</h2>
+          <p>选下方的四颗星，看看它们连起来是什么。</p>
+        </div>
+        <div class="sky"><canvas id="sky-canvas" aria-hidden="true"></canvas></div>
+        <div class="star-keys" aria-label="点亮纪念日">
+          <button type="button" class="star-key" aria-pressed="false"><span class="star-symbol" aria-hidden="true">✦</span>在一起</button>
+          <button type="button" class="star-key" aria-pressed="false"><span class="star-symbol" aria-hidden="true">✦</span>领证</button>
+          <button type="button" class="star-key" aria-pressed="false"><span class="star-symbol" aria-hidden="true">✦</span>婚礼</button>
+          <button type="button" class="star-key" aria-pressed="false"><span class="star-symbol" aria-hidden="true">✦</span>今天</button>
+        </div>
+        <p class="sky-message" id="sky-message" role="status">已点亮 0 颗，共 4 颗。</p>
+        <p class="stars-next"><a href="#wish">去吹蜡烛 ↓</a></p>
+      </div>
     </section>
     <section class="night" id="wish" aria-labelledby="wish-title">
       <p class="label">03 &nbsp; / &nbsp; MAKE A WISH</p>
@@ -106,7 +201,7 @@
     const night = document.querySelector('.night');
     const confetti = document.querySelector('.confetti');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-    gift.hidden = !['#story', '#wish', '#letter-title'].includes(location.hash);
+    gift.hidden = !['#story', '#wish', '#stars', '#letter-title'].includes(location.hash);
     opener.addEventListener('click', event => {
       event.preventDefault();
       gift.hidden = false;
@@ -115,6 +210,211 @@
       story.scrollIntoView({behavior:reduced.matches ? 'instant' : 'smooth',block:'center'});
     });
     candle.hidden = false;
+    const music = document.querySelector('#music');
+    const musicStatus = document.querySelector('#music-status');
+    const AudioEngine = window.AudioContext || window.webkitAudioContext;
+    const melody = [
+      [0, 60], [1, 64], [2, 67], [3.5, 69], [4.5, 67], [5.5, 64],
+      [7, 62], [8, 65], [9, 69], [10.5, 67], [11.5, 64], [12.5, 60]
+    ];
+    let audio;
+    let playing;
+    let musicEnd;
+
+    function stopMusic() {
+      clearTimeout(musicEnd);
+      const level = playing.gain;
+      level.setTargetAtTime(0, audio.currentTime, .025);
+      const output = playing;
+      setTimeout(() => output.disconnect(), 200);
+      playing = undefined;
+      music.textContent = '♫ 播放小夜曲';
+    }
+
+    function playNote(output, start, pitch, volume) {
+      const tone = audio.createOscillator();
+      const envelope = audio.createGain();
+      tone.type = 'sine';
+      tone.frequency.value = 440 * 2 ** ((pitch - 69) / 12);
+      envelope.gain.setValueAtTime(.001, start);
+      envelope.gain.linearRampToValueAtTime(volume, start + .045);
+      envelope.gain.exponentialRampToValueAtTime(.001, start + 1.45);
+      tone.connect(envelope).connect(output);
+      tone.start(start);
+      tone.stop(start + 1.48);
+    }
+
+    if (AudioEngine) {
+      music.hidden = false;
+      music.addEventListener('click', async () => {
+        if (playing) {
+          stopMusic();
+          return;
+        }
+        music.disabled = true;
+        try {
+          audio ??= new AudioEngine();
+          await audio.resume();
+          playing = audio.createGain();
+          playing.connect(audio.destination);
+          const start = audio.currentTime + .06;
+          for (const [time, pitch] of melody) {
+            playNote(playing, start + time, pitch, .085);
+          }
+          for (const [time, pitch] of [[0, 48], [3.5, 45], [7, 50], [10.5, 48]]) {
+            playNote(playing, start + time, pitch, .055);
+          }
+          music.textContent = 'Ⅱ 停止小夜曲';
+          musicStatus.textContent = '';
+          musicEnd = setTimeout(stopMusic, 14400);
+        } catch {
+          if (playing) stopMusic();
+          musicStatus.textContent = '小夜曲暂时无法播放。';
+        } finally {
+          music.disabled = false;
+        }
+      });
+    }
+
+    const sky = document.querySelector('#sky-canvas');
+    const skyMessage = document.querySelector('#sky-message');
+    const starKeys = [...document.querySelectorAll('.star-key')];
+    const skyContext = sky.getContext('2d');
+    const points = [.92, 1.67, Math.PI, 4.88];
+    const litStars = new Set();
+    const dust = Array.from({length: 120}, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      radius: .3 + Math.random() * 1.25,
+      opacity: .2 + Math.random() * .65
+    }));
+    let traces = [];
+    let heartStart;
+    let skyFrame;
+
+    function heartPoint(angle, width, height) {
+      const scale = Math.min(width, height) * .022;
+      const x = 16 * Math.sin(angle) ** 3;
+      const y = 13 * Math.cos(angle) - 5 * Math.cos(2 * angle) -
+        2 * Math.cos(3 * angle) - Math.cos(4 * angle);
+      return {x: width / 2 + x * scale, y: height * .47 - y * scale};
+    }
+
+    function drawSky(now) {
+      skyFrame = undefined;
+      const width = sky.clientWidth;
+      const height = sky.clientHeight;
+      if (!skyContext || !width || !height) return;
+      const ratio = Math.min(devicePixelRatio || 1, 2);
+      const pixelWidth = Math.round(width * ratio);
+      const pixelHeight = Math.round(height * ratio);
+      if (sky.width !== pixelWidth || sky.height !== pixelHeight) {
+        sky.width = pixelWidth;
+        sky.height = pixelHeight;
+      }
+      const ctx = skyContext;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+      for (const star of dust) {
+        ctx.globalAlpha = star.opacity;
+        ctx.fillStyle = '#f8dded';
+        ctx.beginPath();
+        ctx.arc(star.x * width, star.y * height, star.radius, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      let progress = 0;
+      if (heartStart !== undefined) {
+        progress = reduced.matches ? 1 : Math.min((now - heartStart) / 1050, 1);
+        const gradient = ctx.createLinearGradient(width * .2, 0, width * .8, height);
+        gradient.addColorStop(0, '#ffe3ab');
+        gradient.addColorStop(.54, '#ff99cf');
+        gradient.addColorStop(1, '#b5b6ff');
+        ctx.save();
+        ctx.strokeStyle = gradient;
+        ctx.shadowColor = '#f88cc8';
+        ctx.shadowBlur = 19;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 2.3;
+        ctx.beginPath();
+        for (let i = 0; i <= Math.floor(progress * 160); i++) {
+          const p = heartPoint(i / 160 * 2 * Math.PI, width, height);
+          if (i === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      points.forEach((angle, index) => {
+        const {x, y} = heartPoint(angle, width, height);
+        const active = litStars.has(index);
+        const radius = active ? 11 : 5;
+        ctx.save();
+        ctx.shadowColor = active ? '#ffd6a5' : 'transparent';
+        ctx.shadowBlur = active ? 18 : 0;
+        ctx.fillStyle = active ? '#fff0ce' : '#d7a1cf';
+        ctx.beginPath();
+        ctx.moveTo(x, y - radius);
+        ctx.quadraticCurveTo(x + 2, y - 2, x + radius, y);
+        ctx.quadraticCurveTo(x + 2, y + 2, x, y + radius);
+        ctx.quadraticCurveTo(x - 2, y + 2, x - radius, y);
+        ctx.quadraticCurveTo(x - 2, y - 2, x, y - radius);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      traces = reduced.matches ? [] : traces.filter(trace => now - trace.start < 900);
+      for (const trace of traces) {
+        const age = (now - trace.start) / 900;
+        const distance = trace.speed * (1 - (1 - age) ** 2);
+        const origin = heartPoint(trace.point, width, height);
+        ctx.globalAlpha = 1 - age;
+        ctx.fillStyle = trace.color;
+        ctx.beginPath();
+        ctx.arc(origin.x + Math.cos(trace.angle) * distance,
+          origin.y + Math.sin(trace.angle) * distance, trace.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      if (traces.length || (heartStart !== undefined && progress < 1)) requestSky();
+    }
+
+    function requestSky() {
+      if (skyFrame === undefined) skyFrame = requestAnimationFrame(drawSky);
+    }
+
+    if (skyContext) new ResizeObserver(requestSky).observe(sky);
+    starKeys.forEach((key, index) => {
+      key.addEventListener('click', () => {
+        if (litStars.has(index)) return;
+        litStars.add(index);
+        key.setAttribute('aria-pressed', 'true');
+        const now = performance.now();
+        if (!reduced.matches && skyContext) {
+          for (let i = 0; i < 26; i++) {
+            traces.push({
+              point: points[index],
+              start: now,
+              angle: i / 26 * Math.PI * 2,
+              speed: 22 + Math.random() * 72,
+              size: 1 + Math.random() * 1.5,
+              color: ['#f6d8a4', '#ff9ad0', '#c5b7ff'][i % 3]
+            });
+          }
+        }
+        if (litStars.size === points.length) {
+          heartStart = now;
+          skyMessage.textContent = '这几天我都记着。以后的日子，也想和你一起记。';
+        } else {
+          skyMessage.textContent = `已点亮 ${litStars.size} 颗，共 ${points.length} 颗。`;
+        }
+        requestSky();
+      });
+    });
+
     let lit = true;
     let cleanup;
     candle.addEventListener('click', () => {
