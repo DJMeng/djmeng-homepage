@@ -365,32 +365,104 @@
     const melodyBeats = melody.reduce((total, [, beats]) => total + beats, 0);
     let audio;
     let playing;
-    let musicEnd;
+    let musicBuffer;
+    let musicSource;
+    let musicStartedAt;
+    let loveTimer;
+    let loveUtterance;
 
     function stopMusic() {
-      clearTimeout(musicEnd);
+      clearTimeout(loveTimer);
+      if (loveUtterance) {
+        window.speechSynthesis.cancel();
+        loveUtterance = undefined;
+      }
       if (!playing) return;
-      const level = playing.gain;
-      level.setTargetAtTime(0, audio.currentTime, .025);
       const output = playing;
-      setTimeout(() => output.disconnect(), 200);
+      const source = musicSource;
+      output.gain.setTargetAtTime(0, audio.currentTime, .025);
+      if (source) {
+        source.onended = () => {
+          source.disconnect();
+          output.disconnect();
+        };
+        source.stop(audio.currentTime + .2);
+      } else {
+        output.disconnect();
+      }
       playing = undefined;
+      musicSource = undefined;
       music.textContent = '♫ 播放生日快乐';
       music.classList.remove('is-playing');
       music.setAttribute('aria-pressed', 'false');
     }
 
-    function playNote(output, start, pitch, volume, duration = 1.45) {
-      const tone = audio.createOscillator();
-      const envelope = audio.createGain();
-      tone.type = 'sine';
-      tone.frequency.value = 440 * 2 ** ((pitch - 69) / 12);
-      envelope.gain.setValueAtTime(.001, start);
-      envelope.gain.linearRampToValueAtTime(volume, start + .045);
-      envelope.gain.exponentialRampToValueAtTime(.001, start + duration);
-      tone.connect(envelope).connect(output);
-      tone.start(start);
-      tone.stop(start + duration + .03);
+    function speakLove() {
+      if (!playing || document.hidden || loveUtterance) return;
+      if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) return;
+      // Keep this personal message on-device rather than using a remote voice.
+      const voice = window.speechSynthesis.getVoices().find(voice => voice.localService && /^zh(?:-|_)/i.test(voice.lang));
+      if (!voice) {
+        musicStatus.textContent = '此设备没有可用的本地中文语音，生日歌会继续循环播放。';
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance('冯明明，我爱你。');
+      utterance.voice = voice;
+      utterance.lang = voice.lang;
+      utterance.rate = 1;
+      utterance.pitch = 1.05;
+      utterance.volume = .65;
+      const finished = () => { if (loveUtterance === utterance) loveUtterance = undefined; };
+      utterance.onend = finished;
+      utterance.onerror = finished;
+      loveUtterance = utterance;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function scheduleLove() {
+      if (!playing) return;
+      const verseSeconds = melodyBeats * beatSeconds;
+      const elapsed = Math.max(0, audio.currentTime - musicStartedAt);
+      let next = musicStartedAt + Math.floor(elapsed / musicBuffer.duration) * musicBuffer.duration + verseSeconds + .2;
+      if (next <= audio.currentTime + .01) next += musicBuffer.duration;
+      loveTimer = setTimeout(() => {
+        if (!playing) return;
+        const phase = (audio.currentTime - musicStartedAt) % musicBuffer.duration;
+        if (phase >= verseSeconds && phase < verseSeconds + 1) speakLove();
+        scheduleLove();
+      }, Math.max(50, (next - audio.currentTime) * 1000));
+    }
+
+    // Render a whole music-box verse once; native audio looping keeps it playing
+    // without relying on timers that browsers throttle in background tabs.
+    function createMusicBuffer() {
+      const sampleRate = 22050;
+      const duration = melodyBeats * beatSeconds + 3.5;
+      const buffer = audio.createBuffer(1, Math.ceil(duration * sampleRate), sampleRate);
+      const samples = buffer.getChannelData(0);
+      function addNote(start, pitch, volume, length) {
+        const frequency = 440 * 2 ** ((pitch - 69) / 12);
+        const offset = Math.round(start * sampleRate);
+        const count = Math.min(Math.ceil(length * sampleRate), samples.length - offset);
+        for (let i = 0; i < count; i++) {
+          const time = i / sampleRate;
+          const attack = Math.min(time / .035, 1);
+          const release = Math.min((length - time) / .08, 1);
+          const decay = Math.exp(-4 * time / length);
+          const phase = 2 * Math.PI * frequency * time;
+          samples[offset + i] += volume * attack * release * decay *
+            (Math.sin(phase) + .12 * Math.sin(phase * 2));
+        }
+      }
+      let beat = 0;
+      for (const [pitch, beats] of melody) {
+        addNote(beat * beatSeconds, pitch, .085, beats * beatSeconds * .96);
+        beat += beats;
+      }
+      for (const [at, chord] of [[1, [48, 52, 55]], [4, [43, 50, 53]], [7, [43, 50, 53]], [10, [48, 52, 55]], [13, [48, 52, 55]], [16, [41, 48, 53]], [20, [41, 48, 53]], [22, [43, 50, 53]], [23, [48, 52, 55]]]) {
+        for (const pitch of chord) addNote(at * beatSeconds, pitch, .015, 1.8);
+      }
+      return buffer;
     }
 
     if (AudioEngine) {
@@ -408,22 +480,20 @@
         try {
           audio ??= new AudioEngine();
           await audio.resume();
+          musicBuffer ??= createMusicBuffer();
           playing = audio.createGain();
           playing.connect(audio.destination);
-          const start = audio.currentTime + .06;
-          let beat = 0;
-          for (const [pitch, beats] of melody) {
-            playNote(playing, start + beat * beatSeconds, pitch, .085, beats * beatSeconds * .92);
-            beat += beats;
-          }
-          for (const [at, chord] of [[1, [48, 52, 55]], [4, [43, 50, 53]], [7, [43, 50, 53]], [10, [48, 52, 55]], [13, [48, 52, 55]], [16, [41, 48, 53]], [20, [41, 48, 53]], [22, [43, 50, 53]], [23, [48, 52, 55]]]) {
-            for (const pitch of chord) playNote(playing, start + at * beatSeconds, pitch, .015);
-          }
+          musicSource = audio.createBufferSource();
+          musicSource.buffer = musicBuffer;
+          musicSource.loop = true;
+          musicSource.connect(playing);
+          musicStartedAt = audio.currentTime + .06;
+          musicSource.start(musicStartedAt);
+          scheduleLove();
           music.textContent = 'Ⅱ 停止生日快乐';
           music.classList.add('is-playing');
           music.setAttribute('aria-pressed', 'true');
           musicStatus.textContent = '';
-          musicEnd = setTimeout(stopMusic, (melodyBeats * beatSeconds + .3) * 1000);
         } catch {
           if (playing) stopMusic();
           musicStatus.textContent = '生日快乐暂时无法播放。';
