@@ -140,6 +140,16 @@
     .candle-out .smoke { animation: smoke-rise 1.8s .15s ease-out both; }
     .wish-lights { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
     .wish-lights i { position: absolute; left: var(--x); top: 56%; width: var(--s); height: var(--s); border-radius: 50%; background: #f6d7a3; box-shadow: 0 0 9px #f6d7a37a; animation: light-rise var(--d) var(--delay) ease-out both; }
+    .fireworks { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .night > :not(.fireworks) { position: relative; z-index: 1; }
+    .firework-burst { position: absolute; left: var(--x); top: var(--y); }
+    .firework-burst i { position: absolute; width: 3px; height: 6px; border-radius: 50%; background: var(--color); box-shadow: 0 0 8px var(--color); opacity: 0; animation: firework-bloom 2.2s var(--delay) cubic-bezier(.12,.65,.3,1) both; }
+    @keyframes firework-bloom {
+      0% { opacity: 0; transform: translate(0, 0) rotate(var(--angle)) scale(.3); }
+      10% { opacity: .9; }
+      45% { opacity: .8; }
+      100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--angle)) scale(.35); }
+    }
     @keyframes words-arrive { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
     @keyframes smoke-rise { 0% { opacity: 0; transform: translateY(0); } 25% { opacity: .55; } 100% { opacity: 0; transform: translate(8px, -32px) scaleX(1.15); } }
     @keyframes light-rise { 0% { opacity: 0; transform: translate(0, 20px); } 20% { opacity: .7; } 100% { opacity: 0; transform: translate(var(--dx), -120px); } }
@@ -154,7 +164,7 @@
       .letter h2 { font-size: clamp(1.7rem, 7vw, 2.4rem); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .smoke, .wish-lights { display: none; }
+      .smoke, .wish-lights, .fireworks { display: none; }
     }
   </style>
 </head>
@@ -225,10 +235,11 @@
       <article class="letter">
         <div class="letter-date">02 &nbsp; / &nbsp; 一封生日信</div>
         <h2 id="letter-title">老婆，生日快乐。</h2>
-        <p>最初只是想多跟你待一会儿，后来，最喜欢的事成了和你说一句「咱们回家吧」。直到现在，随口叫你一声老婆，我还是会偷偷高兴。</p>
-        <p>日子里也有我没做好的时候。以后，我想少一点急着解释，多一点听你说完，把爱放进每天的小事里。</p>
-        <p>27 岁，愿你尽兴地喜欢，安心地休息。不必每件事都做得很好，在我这里，你也可以只是你。</p>
-        <p class="letter-promise">你的愿望，许给自己。我的愿望，是明年、后年，每次你吹蜡烛的时候，我都在。</p>
+        <p>最初就是想找你玩，想天天看到你。后来真的天天住在一起了，才发现，怎么反而更喜欢你了。</p>
+        <p>以前那几年，我们很少吵架。这一两年，从谈彩礼开始，好像多了好多争执。我也常埋怨你：「你怎么变了？」有时我也说不清，我们怎么就变成了这样。可有一句话，我一直很确定：我还是爱你的，还是想和你好好过下去。</p>
+        <p>有时候真的气得快炸了，可睡一觉，第二天又觉得，还是想跟你好好的。其实我想要的，是我们都能软一点，别总硬碰硬，别用越来越大的声音把彼此推远。我想被你好好听见，也想学着好好听你说。</p>
+        <p>今天你生日，好了，我又说多了。那些不开心的，今天先放一放。宝贝老婆，愿你天天开心，永远快乐。</p>
+        <p class="letter-promise">往后，我们一起好好经营这个家，好好经营我们的婚姻，把日子过得越来越好。我相信我们可以。说不清哪来的底气，反正，我就是相信我们。</p>
         <p class="signature">爱你的老公</p>
         <a class="letter-link" href="#stars">给我们的日子点上星星 ↓</a>
       </article>
@@ -253,6 +264,7 @@
       </div>
     </section>
     <section class="night" id="wish" aria-labelledby="wish-title">
+      <div class="fireworks" aria-hidden="true"></div>
       <p class="label">03 &nbsp; / &nbsp; MAKE A WISH</p>
       <h2 id="wish-title">这一刻，归你。</h2>
       <p class="wish-copy">闭上眼睛，悄悄许个愿。<br>想好了，就把蜡烛吹灭吧。</p>
@@ -283,6 +295,7 @@
     const result = document.querySelector('.wish-result');
     const night = document.querySelector('.night');
     const wishLights = document.querySelector('.wish-lights');
+    const fireworks = document.querySelector('.fireworks');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     let openingTimer;
     let opening = false;
@@ -585,6 +598,40 @@
     let lit = true;
     let wishTimer;
     let cleanup;
+    let fireworksCleanup;
+
+    function clearFireworks() {
+      clearTimeout(fireworksCleanup);
+      fireworks.replaceChildren();
+    }
+
+    function launchFireworks() {
+      if (reduced.matches) return;
+      clearFireworks();
+      const colors = ['#f6d7a3', '#ef9fae', '#fff0cc'];
+      const blooms = [[20, 24, .4], [80, 32, .85], [27, 57, 1.5], [76, 65, 2.15], [50, 18, 2.8]];
+      const radius = Math.min(night.clientWidth * .2, 125);
+      for (const [x, y, delay] of blooms) {
+        const burst = document.createElement('div');
+        burst.className = 'firework-burst';
+        burst.style.setProperty('--x', `${x}%`);
+        burst.style.setProperty('--y', `${y}%`);
+        burst.style.setProperty('--delay', `${delay}s`);
+        for (let i = 0; i < 28; i++) {
+          const spark = document.createElement('i');
+          const angle = i / 28 * Math.PI * 2;
+          const reach = radius * (.55 + Math.random() * .45);
+          spark.style.setProperty('--color', colors[i % colors.length]);
+          spark.style.setProperty('--angle', `${angle + Math.PI / 2}rad`);
+          spark.style.setProperty('--dx', `${Math.cos(angle) * reach}px`);
+          spark.style.setProperty('--dy', `${Math.sin(angle) * reach + 30}px`);
+          burst.append(spark);
+        }
+        fireworks.append(burst);
+      }
+      fireworksCleanup = setTimeout(clearFireworks, 5200);
+    }
+
     function revealWish() {
       result.append('以后每一年的今天，', document.createElement('br'), '我都想在你身边。');
       result.classList.add('is-revealed');
@@ -603,6 +650,7 @@
     candle.addEventListener('click', () => {
       clearTimeout(wishTimer);
       clearTimeout(cleanup);
+      clearFireworks();
       result.replaceChildren();
       result.classList.remove('is-revealed');
       wishLights.replaceChildren();
@@ -611,7 +659,10 @@
       candle.textContent = lit ? '吹灭蜡烛 ✧' : '再点一次蜡烛 ↻';
       if (lit) return;
       if (reduced.matches) revealWish();
-      else wishTimer = setTimeout(revealWish, 1000);
+      else {
+        launchFireworks();
+        wishTimer = setTimeout(revealWish, 1000);
+      }
     });
     reduced.addEventListener('change', () => {
       requestSky();
@@ -625,6 +676,7 @@
       }
       clearTimeout(wishTimer);
       clearTimeout(cleanup);
+      clearFireworks();
       wishLights.replaceChildren();
       if (!lit && !result.textContent) revealWish();
     });
