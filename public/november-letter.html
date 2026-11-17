@@ -401,12 +401,12 @@
       if (!playing || document.hidden || loveUtterance) return;
       if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) return;
       // Keep this personal message on-device rather than using a remote voice.
-      const voice = window.speechSynthesis.getVoices().find(voice => voice.localService && /^zh(?:-|_)/i.test(voice.lang));
+      const voice = window.speechSynthesis.getVoices().find(voice => voice.localService && /^en(?:-|_)/i.test(voice.lang));
       if (!voice) {
-        musicStatus.textContent = '此设备没有可用的本地中文语音，生日歌会继续循环播放。';
+        musicStatus.textContent = '此设备没有可用的本地英文语音，生日歌会继续循环播放。';
         return;
       }
-      const utterance = new SpeechSynthesisUtterance('冯明明，我爱你。');
+      const utterance = new SpeechSynthesisUtterance('I love you, Ming.');
       utterance.voice = voice;
       utterance.lang = voice.lang;
       utterance.rate = 1;
